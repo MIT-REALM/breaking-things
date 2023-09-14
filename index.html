@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="CoRL 2023 Paper: A Bayesian Approach to Breaking Things">
+  <meta name="keywords" content="Automatic design tools, root-cause failure analysis, optimization-as-inference">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A Bayesian approach to breaking things: efficiently predicting and repairing failure modes via sampling</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.png">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://keunhong.com">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a>
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More Research
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://realm.mit.edu">
+            REALM Website
+          </a>
+        </div>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://mit-realm.github.io/architect-rss2022/">
+            Prior work: optimization with differentiable design 
+          </a>
+        </div>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://mit-realm.github.io/architect-iros2022/">
+            Prior work: counterexample-guided optimization  with differentiable design
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">A Bayesian approach to breaking things: efficiently predicting and repairing failure modes via sampling</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://dawson.mit.edu">Charles Dawson</a>,</span>
+            <span class="author-block">
+              <a href="https://chuchu.mit.edu">Chuchu Fan</a>,</span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Massachusetts Institute of Technology</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://openreview.net/forum?id=fNLBmtyBiC"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/TODO"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <span class="link-block">
+                <a href="https://youtu.be/gzhRVMUwqG0"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Supplementary Video</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://youtu.be/TODO"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Presentation Video</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/MIT-REALM/architect_corl_23"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img src="./static/images/headline_robotics.png"
+        class="center-image"
+        alt="An overview of our method for predicting and repairing failure modes in autonomous systems, shown here handling connectivity failures in a drone swarm. First, we use differentiable simulation to optimize an initial solution; then, we predict failure modes using fast gradient-based sampling. We use these failure modes to re-optimize the design and repeat this process until a high-quality solution is achieved."/>
+      <h2 class="subtitle has-text-centered">
+        <br/>
+        An overview of our method for predicting and repairing failure modes in autonomous systems, shown here handling connectivity failures in a drone swarm.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Paper video. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Video</h2>
+        <div class="publication-video">
+          <iframe src="https://youtu.be/gzhRVMUwqG0?rel=0&amp;showinfo=0"
+                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+    <!--/ Paper video. -->
+
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Before autonomous systems can be deployed in safety-critical applications, we must be able to understand and verify the safety of these systems. For cases where the risk or cost of real-world testing is prohibitive, we propose a simulation-based framework for a) predicting ways in which an autonomous system is likely to fail and b) automatically adjusting the system's design to preemptively mitigate those failures. We frame this problem through the lens of approximate Bayesian inference and use differentiable simulation for efficient failure case prediction and repair. We apply our approach on a range of robotics and control problems, including optimizing search patterns for robot swarms and reducing the severity of outages in power transmission networks. Compared to optimization-based falsification techniques, our method predicts a more diverse, representative set of failure modes, and we also find that our use of differentiable simulation yields solutions that have up to 10x lower cost and requires up to 2x fewer iterations to converge relative to gradient-free techniques.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <div class="columns is-centered">
+
+      <!-- Main point 1 -->
+      <div class="column">
+        <div class="content">
+          <h2 class="title is-3">Finding more diverse counterexamples leads to more robust designs, in both simulation and hardware.</h2>
+          <img src="./static/images/hw_results.png"
+            class="center-image simulation-image"
+            alt="(Left) HW results for search-evasion with 5 hiders and 3 seekers, showing an initial search pattern (blue) and predicted failure modes (red). (Center) HW results for an optimized search pattern leaves fewer hiding places. (Right, top) An initial manipulation policy knocks over the object. (Right, bottom) The repaired manipulation policy pushes without knocking the bottle over."/>
+        </div>
+      </div>
+      <!--/ Main point 1 -->
+
+      <!-- Main point 2 -->
+      <div class="column">
+        <div class="content">
+          <h2 class="title is-3">Applications to electrical power networks demonstrate scalability to high-dimensional systems.</h2>
+          <img src="./static/images/predicted_failure_modes.png"
+            class="center-image simulation-image"
+            alt="An illustration of a counterexample for an electrical power network: a series of line outages that could lead to a blackout."/>
+        </div>
+      </div>
+      <!--/ Main point 2 -->
+
+
+    <!-- Concurrent Work. -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Related Links</h2>
+
+        <div class="content has-text-justified">
+          <p>
+            This work is part of a broader research thread around <emph>automated testing and design automation</emph>, which allow engineers to more effectively design safe, reliable, and resilient robotic systems.
+          </p>
+          <p>
+            Other work on this topic from our lab include:
+            <ul>
+              <li><a href="https://mit-realm.github.io/architect-iros2022/">Counterexample-guided planning from temporal logic</a>.</li>
+              <li><a href="https://mit-realm.github.io/architect-rss2022/">Differentiable simulation for design optimization</a>.</li>
+            </ul>
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Concurrent Work. -->
+  </div>
+</section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{dawson2023_breaking_things,
+      author    = {Dawson, Charles and Fan, Chuchu},
+      title     = {A Bayesian approach to breaking things: efficiently predicting and repairing failure modes via sampling },
+      journal   = {Conference on Robot Learning (CoRL)},
+      year      = {2023},
+    }
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+            This webpage template is based that used by <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>. 
+            We sincerely thank <a href="https://keunhong.com/">Keunhong Park</a> for developing and open-sourcing this template.
+          </p>
+        </div>
+      </div>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+</body>
+</html>
